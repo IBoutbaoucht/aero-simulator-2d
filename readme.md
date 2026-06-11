@@ -82,3 +82,18 @@ pip install numpy pygame
 
 # Execute the simulation
 python realtime_lab.py
+
+
+```
+
+## Expanding the Laboratory
+
+The simulator is highly data-driven. To add a new experimental object:
+
+1. **Create the Body:** Define its class in `physics.py` (implement state, dynamics, constraints, and rendering).
+2. **Create the Controller:** Implement a control loop in a new file (or use `NullController` for passive objects).
+3. **Register the Entity:** Add it to the `world` list inside `run_realtime_laboratory()` in `realtime_lab.py`.
+4. **Script Events:** Add its timeline entry in `event_timeline.py`.
+
+No changes to the integration loop, renderer, or telemetry systems are required.
+
