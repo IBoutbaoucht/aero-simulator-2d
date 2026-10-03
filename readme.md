@@ -60,6 +60,56 @@ The `BirotorController` implements a cascaded PID loop with smart motor mixing a
 4.  **Motor Mixer:** Solves the linear system to distribute thrust and torque demands into squared RPM commands for the left and right motors:
     * $\omega_{1}^2 = \frac{T_{dest}}{2k_f} + \frac{\tau_{dest}}{2Lk_f}$
     * $\omega_{2}^2 = \frac{T_{dest}}{2k_f} - \frac{\tau_{dest}}{2Lk_f}$
+5.  **Smart Saturation:** If rotational torque demands push a motor's RPM below zero, the mixer dynamically re-allocates the deficit to the opposing motor to preserve control authority and directional torque.
+
+---
+
+## Simulation Timeline
+
+The laboratory runs a scripted timeline (`event_timeline.py`) to test controller robustness against dynamic targets and external disturbances:
+
+| Phase | Time (s) | Event Description | Target Behavior |
+| :--- | :--- | :--- | :--- |
+| **0** | 0.0 - 5.0 | Takeoff & Stabilization | Static hover at (5.0, 5.0) |
+| **1** | 5.0 - 10.0 | Gale-force Wind | Sustained 10.0 N lateral push |
+| **2** | 10.0 - 15.0 | Calm Recovery | Return to static hover |
+| **3** | 15.0 - 18.0 | Vertical Microburst | Severe -14.0 N downward shear |
+| **4** | 20.0+ | Dynamic Tracking | Continuous figure-8 trajectory |
+
+---
+
+## Installation & Execution
+
+### Prerequisites
+* Python 3.8+
+* NumPy
+* Pygame
+
+```bash
+# Clone the repository
+git clone https://github.com/IBoutbaoucht/aero-simulator-2d
+cd aero-simulator-2d
+
+# Install dependencies
+pip install numpy pygame
+
+# Execute the simulation
+python realtime_lab.py
+
+
+```
+
+## Expanding the Laboratory
+
+The simulator is highly data-driven. To add a new experimental object:
+
+1. **Create the Body:** Define its class in `physics.py` (implement state, dynamics, constraints, and rendering).
+2. **Create the Controller:** Implement a control loop in a new file (or use `NullController` for passive objects).
+3. **Register the Entity:** Add it to the `world` list inside `run_realtime_laboratory()` in `realtime_lab.py`.
+4. **Script Events:** Add its timeline entry in `event_timeline.py`.
+
+No changes to the integration loop, renderer, or telemetry systems are required.
+
 
 ---
 
