@@ -113,4 +113,4 @@ No changes to the integration loop, renderer, or telemetry systems are required.
 
 ---
 
-<p align="center"><sub>MIT License · Built by <a href="https://github.com/IBoutbaoucht">Imad Boutbaoucht</a></sub></p>
+<p align="center"><sub>MIT License · <a href="LICENSE">LICENSE</a></sub></p>
