@@ -1,10 +1,23 @@
-# Aero-Simulator-2D
+<p align="center">
+  <img src="assets/banner.svg" alt="Aero Simulator 2D — deterministic flight physics and control lab" width="100%">
+</p>
 
-A deterministic, real-time 2D physics simulator and control laboratory written in Python. This project simulates the flight dynamics of multirotor UAVs (Unmanned Aerial Vehicles) subject to external forces, utilizing a custom-built Runge-Kutta 4th Order (RK4) integrator and cascaded PID (Proportional-Integral-Derivative) controllers. 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3670A0?style=flat-square&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white">
+  <img src="https://img.shields.io/badge/Pygame-3776AB?style=flat-square&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square">
+</p>
 
-This is a standalone, completed solo project designed for testing control logic against realistic 2D physical constraints, including aerodynamic drag, gravity, and external wind shear.
+# Aero Simulator 2D
 
----
+A deterministic, real-time 2D physics simulator and control laboratory written in Python. The project simulates multirotor UAV flight dynamics under external forces using a custom Runge-Kutta 4th order (RK4) integrator and cascaded PID (Proportional-Integral-Derivative) controllers. It works as a testbed for control logic against realistic 2D constraints — aerodynamic drag, gravity, and wind shear.
+
+## Why it is technically interesting
+
+- **Custom RK4 integrator at 200 Hz** — every body must provide a state vector, a `.dynamics()` derivative, and `.apply_constraints()`; the loop stays agnostic.
+- **Cascaded PID control** — outer position loop → pitch/thrust mapping → inner attitude PID → motor mixer with smart saturation that re-allocates torque when a motor hits zero RPM.
+- **Scripted disturbance timeline** — an event timeline drives a gale-force wind, a microburst, and a figure-8 tracking phase to validate robustness.
 
 ## Architecture Overview
 
@@ -47,53 +60,7 @@ The `BirotorController` implements a cascaded PID loop with smart motor mixing a
 4.  **Motor Mixer:** Solves the linear system to distribute thrust and torque demands into squared RPM commands for the left and right motors:
     * $\omega_{1}^2 = \frac{T_{dest}}{2k_f} + \frac{\tau_{dest}}{2Lk_f}$
     * $\omega_{2}^2 = \frac{T_{dest}}{2k_f} - \frac{\tau_{dest}}{2Lk_f}$
-5.  **Smart Saturation:** If rotational torque demands push a motor's RPM below zero, the mixer dynamically re-allocates the deficit to the opposing motor to preserve control authority and directional torque.
 
 ---
 
-## Simulation Timeline
-
-The laboratory runs a scripted timeline (`event_timeline.py`) to test controller robustness against dynamic targets and external disturbances:
-
-| Phase | Time (s) | Event Description | Target Behavior |
-| :--- | :--- | :--- | :--- |
-| **0** | 0.0 - 5.0 | Takeoff & Stabilization | Static hover at (5.0, 5.0) |
-| **1** | 5.0 - 10.0 | Gale-force Wind | Sustained 10.0 N lateral push |
-| **2** | 10.0 - 15.0 | Calm Recovery | Return to static hover |
-| **3** | 15.0 - 18.0 | Vertical Microburst | Severe -14.0 N downward shear |
-| **4** | 20.0+ | Dynamic Tracking | Continuous figure-8 trajectory |
-
----
-
-## Installation & Execution
-
-### Prerequisites
-* Python 3.8+
-* NumPy
-* Pygame
-
-```bash
-# Clone the repository
-git clone https://github.com/IBoutbaoucht/Aero-Simulator-2D
-cd Aero-Simulator-2D
-
-# Install dependencies
-pip install numpy pygame
-
-# Execute the simulation
-python realtime_lab.py
-
-
-```
-
-## Expanding the Laboratory
-
-The simulator is highly data-driven. To add a new experimental object:
-
-1. **Create the Body:** Define its class in `physics.py` (implement state, dynamics, constraints, and rendering).
-2. **Create the Controller:** Implement a control loop in a new file (or use `NullController` for passive objects).
-3. **Register the Entity:** Add it to the `world` list inside `run_realtime_laboratory()` in `realtime_lab.py`.
-4. **Script Events:** Add its timeline entry in `event_timeline.py`.
-
-No changes to the integration loop, renderer, or telemetry systems are required.
-
+<p align="center"><sub>MIT License · Built by <a href="https://github.com/IBoutbaoucht">Imad Boutbaoucht</a></sub></p>
